@@ -68,7 +68,7 @@ const saveFeedBack = async (req, res) => {
 
 const getData = async (req, res) => {
   try {
-    const data = await Feedback.find()
+    const data = await Feedback.find();
     res.status(201).json({
       msg: "Data Fetched SuccessFully",
       data: data,
@@ -78,4 +78,61 @@ const getData = async (req, res) => {
   }
 };
 
-module.exports = { signin, login, saveFeedBack, getData };
+const deletefeedback = async (req, res) => {
+  try {
+    const { id } = req.query;
+    const data = await Feedback.findByIdAndDelete(id);
+
+    if (!data) {
+      return res.status(404).json({ msg: "Data Not Found" });
+    }
+
+    res.status(200).json({
+      msg: "Data Deleted Successfully",
+      data,
+    });
+  } catch (err) {
+    res.status(500).json({ msg: err.message });
+  }
+};
+
+const getByid = async (req, res) => {
+  try {
+    const data = await Feedback.findById(req.params.id);
+    if (!data) return res.status(404).json({ msg: "Feedback not found" });
+    res.status(200).json(data);
+  } catch (err) {
+    res.status(500).json({ msg: err.message });
+  }
+};
+
+const updateFeedback = async (req, res) => {
+  try {
+    const { id, name, email, city, date, feedback } = req.body;
+
+    let updateData = { name, email, city, date, feedback };
+
+    if (req.file) {
+      updateData.imageUrl = `/feedBackUpload/${req.file.filename}`;
+    }
+
+    const updated = await Feedback.findByIdAndUpdate(id, updateData, {
+      new: true, 
+      runValidators: true,
+    });
+
+    if (!updated) {
+      return res.status(404).json({ msg: "Feedback not found" });
+    }
+
+    res.status(200).json({
+      msg: "Feedback updated successfully",
+      data: updated,
+    });
+  } catch (err) {
+    res.status(500).json({ msg: err.message });
+  }
+};
+
+
+module.exports = { signin, login, saveFeedBack, getData, deletefeedback,getByid, updateFeedback };

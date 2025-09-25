@@ -12,4 +12,11 @@ router.post('/savefeedback',verifyToken,Upload.single("imageUrl"),feedbackContro
 
 router.get('/getData',verifyToken,feedbackController.getData)
 
+router.delete('/deletefeedback',verifyToken,feedbackController.deletefeedback)
+
+router.get("/:id", verifyToken,feedbackController.getByid);
+
+router.put('/updatefeedback',verifyToken,Upload.single("imageUrl"), feedbackController.updateFeedback);
+
+
 module.exports = router
